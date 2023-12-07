@@ -1,21 +1,46 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import './home.css';
-import { Link } from 'react-router-dom'; 
-const home =() =>{
+import React, { useState } from 'react';
+
+function Home() {
+  const [input, setInput] = useState('');
+  const [output, setOutput] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch('http://localhost:3001/execute', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ input }),
+      });
+
+      const data = await response.text();
+      setOutput(data);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
   return (
-    <div>
-     <section className="ftco-section ftco-no-pt d-flex justify-content-md-center justify-content-center align-items-md-center align-items-center gradient-container2" style={{ backgroundColor: 'white', height:'100vh' }}>
-    <div classname= 'row align-items-center justify-content-center'>
-   <h> Selamat siang </h>
-   <p> email pengguna </p>
-   <p> jam saat ini </p>
-  </div>
-  </section>
-  </div>
+    <div className="App">
+      <h1>Command Injection Example</h1>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Enter command"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+        />
+        <button type="submit">Execute</button>
+      </form>
+      <div>
+        <h2>Output:</h2>
+        <p>{output}</p>
+      </div>
+    </div>
   );
 }
 
-export default home;
+export default Home;
